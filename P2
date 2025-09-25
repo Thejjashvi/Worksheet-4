@@ -1,0 +1,73 @@
+#include <iostream>
+using namespace std;
+class TIME {
+    int hr, min, sec;
+public:
+    TIME() {
+        hr = 0;
+        min = 0;
+        sec = 0;
+    }
+    TIME(int h, int m, int s) {
+        hr = h;
+        min = m;
+        sec = s;
+        normalize();
+    }
+    TIME(const TIME &t) {
+        hr = t.hr;
+        min = t.min;
+        sec = t.sec;
+    }
+
+    void getdata() {
+        cout << "Enter hours: ";
+        cin >> hr;
+        cout << "Enter minutes: ";
+        cin >> min;
+        cout << "Enter seconds: ";
+        cin >> sec;
+        normalize();
+    }
+    void showdata() const {
+        cout << hr << " hr : "
+             << min << " min : "
+             << sec << " sec" << endl;
+    }
+    void normalize() {
+        if (sec >= 60) {
+            min += sec / 60;
+            sec %= 60;
+        }
+        if (min >= 60) {
+            hr += min / 60;
+            min %= 60;
+        }
+    }
+    TIME operator+(const TIME &t) const {
+        TIME temp;
+        temp.hr = hr + t.hr;
+        temp.min = min + t.min;
+        temp.sec = sec + t.sec;
+        temp.normalize();
+        return temp;
+    }
+    TIME operator++(int) {
+        TIME temp = *this;
+        sec++;
+        normalize();
+        return temp;
+        }
+};
+int main() {
+    TIME t1, t2, t3;
+    t1.getdata();
+    t2.getdata();
+    t3 = t1 + t2;
+    t1++;
+    cout << "\nSum of times (t3): ";
+    t3.showdata();
+    cout << "Time t1 after increment: ";
+    t1.showdata();
+    return 0;
+}
