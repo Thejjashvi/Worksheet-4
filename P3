@@ -1,0 +1,78 @@
+#include <iostream>
+#include <cmath>
+using namespace std;
+class DB;
+class DM {
+    double meter;
+    double cm;
+public:
+    DM() : meter(0), cm(0) {}
+    DM(double m, double c) : meter(m), cm(c) { normalize(); }
+    void normalize() {
+        if (cm >= 100) {
+            meter += static_cast<int>(cm) / 100;
+            cm = fmod(cm, 100.0);
+        }
+    }
+    void getdata() {
+        cout << "Enter distance in meters: ";
+        cin >> meter;
+        cout << "Enter distance in centimeters: ";
+        cin >> cm;
+        normalize();
+    }
+    void showdata() const {
+        cout << meter << " meter(s) and " << cm << " centimeter(s)" << endl;
+    }
+    friend DM addDistance(const DM &d1, const DB &d2);
+};
+class DB {
+    double feet;
+    double inch;
+public:
+    DB() : feet(0), inch(0) {}
+    DB(double f, double i) : feet(f), inch(i) { normalize(); }
+    void normalize() {
+        if (inch >= 12) {
+            feet += static_cast<int>(inch) / 12;
+            inch = fmod(inch, 12.0);
+        }
+    }
+    void getdata() {
+        cout << "Enter distance in feet: ";
+        cin >> feet;
+        cout << "Enter distance in inches: ";
+        cin >> inch;
+        normalize();
+    }
+    void showdata() const {
+        cout << feet << " feet and " << inch << " inch(es)" << endl;
+    }
+    friend DM addDistance(const DM &d1, const DB &d2);
+};
+DM addDistance(const DM &d1, const DB &d2) {
+    const double inch_to_cm = 2.54;
+    const double foot_to_cm = 30.48;
+    double total_cm_db = d2.feet * foot_to_cm + d2.inch * inch_to_cm;
+    double total_cm_dm = d1.meter * 100 + d1.cm;
+    double grand_total_cm = total_cm_dm + total_cm_db;
+    double meters = static_cast<int>(grand_total_cm / 100);
+    double centimeters = fmod(grand_total_cm, 100.0);
+    return DM(meters, centimeters);
+}
+int main() {
+    DM dm1, dm_sum;
+    DB db1;
+    cout << "Enter distance in metric units (DM):\n";
+    dm1.getdata();
+    cout << "\nEnter distance in imperial units (DB):\n";
+    db1.getdata();
+    dm_sum = addDistance(dm1, db1);
+    cout << "\nFirst distance (DM): ";
+    dm1.showdata();
+    cout << "Second distance (DB): ";
+    db1.showdata();
+    cout << "Total distance (in metric): ";
+    dm_sum.showdata();
+    return 0;
+}
